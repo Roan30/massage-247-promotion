@@ -25,23 +25,34 @@
       display: none;
       text-align: center;
     }
-    .first-time-message {
+    .small-text {
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+    .subheading {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .first-visit-message {
       display: none;
-      font-size: 14px;
-      color: #ff6347; /* Example color */
       text-align: center;
+      font-size: 1rem;
+      color: #28a745;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
 
-  <div class="first-time-message" id="firstTimeMessage">
-    <p>🎉 Welcome to Massage 24/7! Enjoy your reward as a first-time visitor!</p>
-  </div>
-
   <div class="form-container" id="bookingFormContainer">
     <h1 class="text-center fw-bold text-success mb-2">REWARD ₱50 AWAITS YOU!</h1>
     <h3 class="text-center mb-4">Claim Your Discount & Book a Massage</h3>
+    
+    <div id="firstVisitMessage" class="first-visit-message">
+      <p>🎉 Welcome to Massage 24/7! Enjoy your exclusive discount as a first-time visitor!</p>
+    </div>
+
     <form id="bookingForm" action="https://formsubmit.co/massage247ph@gmail.com" method="POST" onsubmit="return handleBooking(event);">
       <input type="hidden" name="_captcha" value="false">
 
@@ -50,7 +61,65 @@
         <input name="Name" type="text" class="form-control" id="name" required />
       </div>
 
-      <!-- Other form fields go here -->
+      <div class="mb-3">
+        <label for="contact" class="form-label">Contact Number</label>
+        <input name="Contact Number" type="text" class="form-control" id="contact" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="serviceType" class="form-label">Service Type</label>
+        <select name="Service Type" class="form-select" id="serviceType" onchange="toggleServiceFields()" required>
+          <option value="">Select...</option>
+          <option value="Spa Visit">Spa Visit</option>
+          <option value="Home Service">Home Service</option>
+          <option value="Hotel Service">Hotel Service</option>
+        </select>
+      </div>
+
+      <div class="mb-3" id="spaBranchField" style="display: none;">
+        <label for="branch" class="form-label">Select Branch</label>
+        <select name="Branch" class="form-select" id="branch">
+          <option value="">Choose Branch</option>
+          <option value="Vicente Cruz">Vicente Cruz</option>
+          <option value="Lacson">Lacson</option>
+          <option value="Lerma">Lerma</option>
+          <option value="Sta. Ana">Sta. Ana</option>
+          <option value="Malate">Malate</option>
+          <option value="Tondo">Tondo</option>
+        </select>
+      </div>
+
+      <div class="mb-3" id="addressField" style="display: none;">
+        <label for="address" class="form-label">Complete Address</label>
+        <input name="Complete Address" type="text" class="form-control" id="address" />
+      </div>
+
+      <div class="mb-3" id="remarksField" style="display: none;">
+        <label for="remarks" class="form-label">Remarks / Notes</label>
+        <textarea name="Remarks" class="form-control" id="remarks" rows="2"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="date" class="form-label">Preferred Date</label>
+        <input name="Preferred Date" type="date" class="form-control" id="date" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="time" class="form-label">Preferred Time</label>
+        <input name="Preferred Time" type="time" class="form-control" id="time" required />
+      </div>
+
+      <div class="mb-3">
+        <label for="gender" class="form-label">Preferred Therapist Gender</label>
+        <select name="Therapist Gender" class="form-select" id="gender" required>
+          <option value="">Select...</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+
+      <!-- Discount Code Field (hidden for email) -->
+      <input type="hidden" name="Discount Code" id="discountHidden" />
 
       <button type="submit" class="btn btn-success w-100">Generate Discount & Book Now</button>
     </form>
@@ -59,15 +128,22 @@
   <div class="success-message" id="successMessage">
     <h4>🎉 Thank You for Booking With Us!</h4>
     <p class="mt-3">Your discount code is: <strong id="discountCodeDisplay"></strong></p>
+    <p>Please contact us to claim your reward:</p>
+    <p class="fw-bold">
+      09658513118<br>
+      09659373768<br>
+      09659373766<br>
+      09659373765
+    </p>
   </div>
 
   <script>
-    // Check if the user is visiting for the first time
-    if (!localStorage.getItem("visitedBefore")) {
-      // Show the first-time visitor message
-      document.getElementById("firstTimeMessage").style.display = "block";
-      // Set a flag in localStorage to indicate that the user has visited before
-      localStorage.setItem("visitedBefore", "true");
+    function toggleServiceFields() {
+      const type = document.getElementById("serviceType").value;
+      document.getElementById("spaBranchField").style.display = type === "Spa Visit" ? "block" : "none";
+      const showAddress = type === "Home Service" || type === "Hotel Service";
+      document.getElementById("addressField").style.display = showAddress ? "block" : "none";
+      document.getElementById("remarksField").style.display = showAddress ? "block" : "none";
     }
 
     function generateDiscountCode() {
@@ -78,6 +154,7 @@
       event.preventDefault();
 
       const code = generateDiscountCode();
+      document.getElementById("discountHidden").value = code;
       document.getElementById("discountCodeDisplay").textContent = code;
 
       // Show success page
@@ -88,6 +165,15 @@
       setTimeout(() => {
         event.target.submit();
       }, 1000);
+    }
+
+    // Check if it's the user's first visit
+    if (!localStorage.getItem("visited")) {
+      // Show first visit message
+      document.getElementById("firstVisitMessage").style.display = "block";
+
+      // Set localStorage to mark the first visit
+      localStorage.setItem("visited", "true");
     }
   </script>
 
