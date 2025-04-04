@@ -132,18 +132,20 @@
     function handleBooking(event) {
       event.preventDefault();
 
+      const form = document.getElementById("bookingForm");
+
       const code = generateDiscountCode();
       document.getElementById("discountHidden").value = code;
       document.getElementById("discountCodeDisplay").textContent = code;
 
-      // Show success page
+      // Show success message
       document.getElementById("bookingFormContainer").style.display = "none";
       document.getElementById("successMessage").style.display = "block";
 
-      // Submit form after showing success
+      // Allow time to read discount, then submit
       setTimeout(() => {
-        event.target.submit();
-      }, 1000);
+        form.submit(); // Use form variable directly
+      }, 1500);
     }
   </script>
 
