@@ -25,6 +25,22 @@
       display: none;
       text-align: center;
     }
+    .small-text {
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+    .subheading {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .first-visit-message {
+      display: none;
+      text-align: center;
+      font-size: 1rem;
+      color: #28a745;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -32,7 +48,7 @@
   <div class="form-container" id="bookingFormContainer">
     <h1 class="text-center fw-bold text-success mb-2">REWARD ₱50 AWAITS YOU!</h1>
     <h3 class="text-center mb-4">Claim Your Discount & Book a Massage</h3>
-
+    
     <div id="firstVisitMessage" class="first-visit-message">
       <p>🎉 Welcome to Massage 24/7! Enjoy your exclusive discount as a first-time visitor!</p>
     </div>
@@ -137,20 +153,27 @@
     function handleBooking(event) {
       event.preventDefault();
 
-      const form = document.getElementById("bookingForm");
-
       const code = generateDiscountCode();
       document.getElementById("discountHidden").value = code;
       document.getElementById("discountCodeDisplay").textContent = code;
 
-      // Show success message
+      // Show success page
       document.getElementById("bookingFormContainer").style.display = "none";
       document.getElementById("successMessage").style.display = "block";
 
-      // Allow time to read discount, then submit
+      // Submit form after showing success
       setTimeout(() => {
-        form.submit(); // Use form variable directly
-      }, 1500);
+        event.target.submit();
+      }, 1000);
+    }
+
+    // Check if it's the user's first visit
+    if (!localStorage.getItem("visited")) {
+      // Show first visit message
+      document.getElementById("firstVisitMessage").style.display = "block";
+
+      // Set localStorage to mark the first visit
+      localStorage.setItem("visited", "true");
     }
   </script>
 
