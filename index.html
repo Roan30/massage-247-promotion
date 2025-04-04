@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Massage 24/7 Booking</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Massage Spa Booking</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
       background: url('https://raw.githubusercontent.com/Roan30/massage-247-promotion/3f3406f518ca58bd1819b08961bfda79bb231264/pexels-cottonbro-3997980%20(1).jpg') no-repeat center center/cover;
@@ -14,7 +14,7 @@
       justify-content: center;
       padding: 2rem;
     }
-    .form-container, .success-message {
+    .form-container {
       background-color: rgba(255, 255, 255, 0.95);
       padding: 2rem;
       border-radius: 15px;
@@ -23,56 +23,131 @@
     }
     .success-message {
       display: none;
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      max-width: 600px;
       text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="form-container" id="bookingFormContainer">
-    <h3 class="text-center mb-4">Claim Your Discount & Book a Massage</h3>
-    <form id="bookingForm" action="https://formsubmit.co/massage247ph@gmail.com" method="POST" onsubmit="return handleBooking(event);">
-      <input type="hidden" name="_captcha" value="false">
 
+  <div class="form-container" id="bookingFormContainer">
+    <h2 class="text-center fw-bold text-success mb-2">REWARD ₱50 AWAITS YOU!</h2>
+    <h3 class="text-center mb-4">Claim your REWARD and Pamper with us!</h3>
+    <form id="bookingForm" onsubmit="return handleBooking();">
       <div class="mb-3">
         <label for="name" class="form-label">Name</label>
-        <input name="Name" type="text" class="form-control" id="name" required />
+        <input type="text" class="form-control" id="name" required>
       </div>
-
       <div class="mb-3">
         <label for="contact" class="form-label">Contact Number</label>
-        <input name="Contact Number" type="text" class="form-control" id="contact" required />
+        <input type="text" class="form-control" id="contact" required>
       </div>
-
       <div class="mb-3">
         <label for="serviceType" class="form-label">Service Type</label>
-        <select name="Service Type" class="form-select" id="serviceType" required>
+        <select class="form-select" id="serviceType" onchange="toggleServiceFields()" required>
           <option value="">Select...</option>
-          <option value="Spa Visit">Spa Visit</option>
-          <option value="Home Service">Home Service</option>
-          <option value="Hotel Service">Hotel Service</option>
+          <option value="spa">Spa Visit</option>
+          <option value="home">Home Service</option>
+          <option value="hotel">Hotel Service</option>
         </select>
       </div>
 
-      <button type="submit" class="btn btn-success w-100">Generate Discount & Book Now</button>
+      <!-- Spa Branch -->
+      <div class="mb-3" id="spaBranchField" style="display: none;">
+        <label for="branch" class="form-label">Select Branch</label>
+        <select class="form-select" id="branch">
+          <option value="">Choose Branch</option>
+          <option value="Vicente Cruz">Vicente Cruz</option>
+          <option value="Lacson">Lacson</option>
+          <option value="Lerma">Lerma</option>
+          <option value="Sta. Ana">Sta. Ana</option>
+          <option value="Malate">Malate</option>
+          <option value="Tondo">Tondo</option>
+        </select>
+      </div>
+
+      <!-- Address and Remarks -->
+      <div class="mb-3" id="addressField" style="display: none;">
+        <label for="address" class="form-label">Complete Address</label>
+        <input type="text" class="form-control" id="address">
+      </div>
+
+      <div class="mb-3" id="remarksField" style="display: none;">
+        <label for="remarks" class="form-label">Remarks / Notes</label>
+        <textarea class="form-control" id="remarks" rows="2"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="date" class="form-label">Preferred Date</label>
+        <input type="date" class="form-control" id="date" required>
+      </div>
+      <div class="mb-3">
+        <label for="time" class="form-label">Preferred Time</label>
+        <input type="time" class="form-control" id="time" required>
+      </div>
+      <div class="mb-3">
+        <label for="gender" class="form-label">Preferred Therapist Gender</label>
+        <select class="form-select" id="gender" required>
+          <option value="">Select...</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-success w-100">Click here to claim and Book with us!</button>
     </form>
   </div>
 
+  <!-- Success Page -->
   <div class="success-message" id="successMessage">
     <h4>🎉 Thank You for Booking With Us!</h4>
-    <p class="mt-3">Your discount code is: <strong id="discountCodeDisplay"></strong></p>
+    <p class="mt-3">Your discount code is: <strong id="discountCode"></strong></p>
     <p>Please contact us to claim your reward:</p>
-    <p class="fw-bold">0965 851 3118<br>0965 937 3768<br>0965 937 3766<br>0965 937 3765</p>
+    <p class="fw-bold">0965 851 3118, 0965 937 3768, 0965 937 3766, 0965 937 3765</p>
   </div>
 
   <script>
-    function handleBooking(event) {
-      event.preventDefault();
-      const code = "DISC" + Math.floor(10000 + Math.random() * 90000);
-      document.getElementById("discountCodeDisplay").textContent = code;
+    function toggleServiceFields() {
+      const type = document.getElementById("serviceType").value;
+      document.getElementById("spaBranchField").style.display = type === "spa" ? "block" : "none";
+      const showAddress = type === "home" || type === "hotel";
+      document.getElementById("addressField").style.display = showAddress ? "block" : "none";
+      document.getElementById("remarksField").style.display = showAddress ? "block" : "none";
+    }
+
+    function generateDiscountCode() {
+      return "DISC" + Math.floor(Math.random() * 90000 + 10000); // e.g., DISC54321
+    }
+
+    function handleBooking() {
+      const formData = {
+        name: document.getElementById("name").value,
+        contact: document.getElementById("contact").value,
+        serviceType: document.getElementById("serviceType").value,
+        date: document.getElementById("date").value,
+        time: document.getElementById("time").value,
+        gender: document.getElementById("gender").value,
+        branch: document.getElementById("branch").value,
+        address: document.getElementById("address").value,
+        remarks: document.getElementById("remarks").value,
+      };
+
+      console.log("Booking Data:", formData); // <-- This is where your data is "going" for now
+
+      // Optional: Send to backend, email, or Google Sheets via integration
+
+      const discountCode = generateDiscountCode();
+      document.getElementById("discountCode").innerText = discountCode;
+
+      // Show success page
       document.getElementById("bookingFormContainer").style.display = "none";
       document.getElementById("successMessage").style.display = "block";
-      setTimeout(() => { event.target.submit(); }, 1000);
+
+      return false; // prevent default form submit
     }
   </script>
+
 </body>
 </html>
